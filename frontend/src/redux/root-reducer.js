@@ -1,15 +1,13 @@
 import { combineReducers } from "redux";
+
 import { connectRouter } from "connected-react-router";
 
-import SignupReducer from "./signup/signup.reducer";
-
-import authReducer from "./login/login.reducer";
+import LoginReducer from "./login/loginSlice";
 
 const createRootReducer = (history) =>
   combineReducers({
     router: connectRouter(history),
-    createUser: SignupReducer,
-    auth: authReducer,
+    auth: LoginReducer,
   });
 
 export default createRootReducer;

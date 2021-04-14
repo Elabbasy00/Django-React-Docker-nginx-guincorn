@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
-import { LoginUser } from "../../redux/login/login.actions";
-import { withRouter } from "react-router-dom"; // new import
+import { loginUser } from "../../redux/login/loginSlice";
+import { useDispatch } from "react-redux";
 
 import {
   Container,
@@ -12,11 +11,13 @@ import {
   Form,
   FormControl,
 } from "react-bootstrap";
-function Login({ LoginUser }) {
+function Login() {
   const [user, setUser] = useState({
-    username: "",
+    email: "",
     password: "",
   });
+
+  const dispatch = useDispatch();
 
   const onChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -24,10 +25,10 @@ function Login({ LoginUser }) {
 
   const onLoginClick = () => {
     const userData = {
-      username: user.username,
       password: user.password,
+      email: user.email,
     };
-    LoginUser(userData, "/");
+    dispatch(loginUser({ userData, redirectTo: "/" }));
   };
   return (
     <Container>
@@ -39,9 +40,9 @@ function Login({ LoginUser }) {
               <Form.Label>User name</Form.Label>
               <Form.Control
                 type="text"
-                name="username"
+                name="email"
                 placeholder="Enter user name"
-                value={user.username}
+                value={user.email}
                 onChange={onChange}
               />
               <FormControl.Feedback type="invalid"></FormControl.Feedback>
@@ -71,11 +72,4 @@ function Login({ LoginUser }) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    LoginUser: (userData, redirectTo) =>
-      dispatch(LoginUser(userData, redirectTo)),
-  };
-};
-
-export default connect(null, mapDispatchToProps)(withRouter(Login));
+export default Login;

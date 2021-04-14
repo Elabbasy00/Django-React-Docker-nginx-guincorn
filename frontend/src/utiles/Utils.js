@@ -14,7 +14,7 @@ export const toastOnError = (error) => {
     // known error
     toast.error(JSON.stringify(error.response.data));
   } else if (error.message) {
-    toast.error(JSON.stringify(error.message));
+    toast.error(JSON.stringify(error.message)[0]);
   } else {
     toast.error(JSON.stringify(error));
   }

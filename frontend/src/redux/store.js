@@ -1,32 +1,37 @@
 import React from "react";
-import thunk from "redux-thunk";
-import { Provider } from "react-redux";
-import { createBrowserHistory } from "history";
-import { applyMiddleware, createStore } from "redux";
-import { routerMiddleware, ConnectedRouter } from "connected-react-router";
-import { setCurrentUser, authSuccess } from "./login/login.actions"; // new imports
-import { isEmpty } from "../utiles/Utils"; // new imports
 
-import rootReducer from "./root-reducer";
+import { Provider } from "react-redux";
+
+import { createBrowserHistory } from "history";
+
+import { routerMiddleware, ConnectedRouter } from "connected-react-router";
+
+import { isEmpty } from "../utiles/Utils";
+
 import logger from "redux-logger";
 
-const Root = ({ children, initialState = {} }) => {
+import { configureStore } from "@reduxjs/toolkit";
+
+import rootReducer from "./root-reducer";
+
+import { authSuccess, setCurrentUser } from "./login/loginSlice";
+
+const Root = ({ children }) => {
   const history = createBrowserHistory();
-  const middleware = [thunk, routerMiddleware(history), logger];
+  const middleware = [routerMiddleware(history), logger];
 
-  const store = createStore(
-    rootReducer(history),
-    initialState,
-    applyMiddleware(...middleware)
-  );
+  const store = configureStore({
+    reducer: rootReducer(history),
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(middleware),
+  });
 
-  // check localStorage
   if (!isEmpty(localStorage.getItem("token"))) {
     store.dispatch(authSuccess(localStorage.getItem("token")));
   }
   if (!isEmpty(localStorage.getItem("user"))) {
     const user = JSON.parse(localStorage.getItem("user"));
-    store.dispatch(setCurrentUser(user, ""));
+    store.dispatch(setCurrentUser({ user, redirectTo: "" }));
   }
 
   return (
